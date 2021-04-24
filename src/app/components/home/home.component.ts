@@ -39,7 +39,7 @@
  	// Logout User
  	logOut(){
  		this.toastr.success('Success', "Logged Out Successfully");
- 		localStorage.removeItem('token');
+ 		sessionStorage.removeItem('token');
  		this.router.navigate(['/login']);
  	}
  }
