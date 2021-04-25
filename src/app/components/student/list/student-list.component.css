@@ -1,3 +1,31 @@
 td {
   vertical-align: middle;
 }
+
+.pagination {
+  display: inline-block;
+}
+
+.pagination li {
+  color: black;
+  float: left;
+  padding: 8px 16px;
+  text-decoration: none;
+}
+
+ul {
+  list-style-type: none;
+  margin-left: 30%;
+  padding: 0;
+  justify-content: center;
+}
+
+li:hover {
+  background-color: gray;
+  cursor: pointer;
+}
+
+.pagination li.active {
+  background-color: #009688;
+  color: white;
+}

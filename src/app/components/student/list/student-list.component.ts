@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
+import { NgxSpinnerService } from "ngx-spinner";
 
 // Services
 import { routerTransition } from '../../../services/config/config.service';
 import { CustomerService } from '../../../services/customer/customer.service';
+import { PagerService } from '../../../services/pager/pagerService';
+
 
 @Component({
 	selector: 'app-student-list',
@@ -16,11 +19,22 @@ import { CustomerService } from '../../../services/customer/customer.service';
 export class StudentListComponent implements OnInit {
 	customers: any;
 	pageNumber: number = 1;
+	totalItems: number = 0;
 	limit: Number = 10;
+	private allItems: any[];
+
+	// pager object
+	pager: any = {};
+
+	// paged items
+	pagedItems: any[];
+
 
 	constructor(
 		private customerService: CustomerService,
-		private toastr: ToastrService
+		private toastr: ToastrService,
+		private pagerService: PagerService,
+		private spinner: NgxSpinnerService
 	) { }
 	// Call student list function on page load 
 	ngOnInit() {
@@ -29,19 +43,30 @@ export class StudentListComponent implements OnInit {
 
 	// Get customers list from services
 	getCustomers(pageNumber, params) {
+		this.spinner.show();
 		this.customerService.getCustomers(this.limit, pageNumber, params).subscribe((res: any) => {
 			if (res.status === 200) {
-				this.customers = res.data.items;
+				this.totalItems = res.data.totalItems;
+				this.allItems = res.data.items;
+				this.setPage(1);
+				this.spinner.hide();
 			} else {
 				this.toastr.error('Failed', "Cannot Add Customer");
+				this.spinner.hide();
 			}
 		}, err => {
 			this.toastr.error('Failed', err.error.message);
+			this.spinner.hide();
 		});
 	}
 
-	pageChanged(event) {
-		this.getCustomers(event, {});
+	setPage(page: number) {
+		this.pageNumber = page;
+		if (page < 1 || page > this.pager.totalPages) {
+			return;
+		}
+		this.pager = this.pagerService.getPager(this.totalItems, page);
+		this.pagedItems = this.allItems.slice(this.pager.startIndex, this.pager.endIndex + 1);
 	}
 
 	// Delete a customer with its id
@@ -75,6 +100,7 @@ export class StudentListComponent implements OnInit {
 	// }
 
 	searchCustomers(event: any) {
+		this.spinner.show();
 		let params = { search: event.target.value };
 		this.getCustomers(this.pageNumber, params);
 	}

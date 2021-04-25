@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { enableProdMode } from '@angular/core';
 
 //Modules
@@ -8,13 +8,14 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
-import { NgxPaginationModule } from 'ngx-pagination'; // <-- import the module
+import { NgxSpinnerModule } from "ngx-spinner";
 
 // Services
 import { AuthService } from './services/auth/auth.service';
 import { UserService } from './services/user/user.service';
 import { StudentService } from './services/student/student.service';
-import { CustomerService } from './services/customer/customer.service'
+import { CustomerService } from './services/customer/customer.service';
+import { PagerService } from './services/pager/pagerService';
 import { AuthTokenInterceptor } from './interceptor/token.interceptor';
 
 // Pipes
@@ -72,19 +73,21 @@ const routes: Routes = [
 		FormsModule,
 		ReactiveFormsModule,
 		BrowserAnimationsModule,
-		NgxPaginationModule,
+		NgxSpinnerModule,
 		ToastrModule.forRoot({
 			timeOut: 3000,
 			positionClass: 'toast-bottom-right',
 			preventDuplicates: true,
 		}),
 	],
+	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 	providers: [
 		{
 			provide: HTTP_INTERCEPTORS,
 			useClass: AuthTokenInterceptor,
 			multi: true
 		},
+		PagerService,
 		AuthService,
 		UserService,
 		StudentService,
